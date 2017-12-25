@@ -1,16 +1,24 @@
-#本脚本仅限用于配置使用nrpe方式监控的linux服务器
+﻿#本脚本仅限用于配置使用nrpe方式监控的linux服务器，可以批量配置同网段中的多台linux客户端，在centos6.8及6.2系统下测试通过，安装说明如下
 
-#在当前目录下执行以下语句赋予所有脚本执行权限
+
+1.脚本最好在linux中进行编辑，避免字符集的问题
+
+2.在当前目录下执行以下语句赋予所有脚本执行权限
 chmod 755 *.sh
 
-#在password、ip、hostname文件里分别填写客户端服务器的root密码、ip地址和主机名（用户标志nagios客户端名称，不一定要和服务器主机名一致），每行填写一个值，不要包含多余的字符，如空格、空行
+3.
+nagios_install.sh：总安装脚本，安装时确保包中所有文件都在一个目录下，在服务端执行此脚本即可，执行前请先完成以下脚本及文件的配置。
 
-#执行nagios_install.sh开始自动安装配置nagios服务端和客户端
-./nagios_install.sh
+在password、ip、hostname文件里分别填写客户端服务器的root密码、ip地址和主机名（主机名用于标识nagios客户端名称，不一定要和服务器主机名一致，因此没必要特地修改服务器主机名），每行填写一个值，不要包含多余的字符，如空格、空行。
 
-#运行check_client.sh检查客户端是否全部安装完成，检查结果保存在check_nrpe.log中
-#虽然在nagios_install.sh执行完毕后会提示直接运行check_client.sh，但实际上这还要取决于客户端的安装速度，建议等至少30分钟后再执行此脚本
-./check_client.sh
+服务端脚本：
+core_install.sh：服务端核心包安装脚本，如内置下载地址失效请自行配置；nagios用户密码设置为abc123，如需变动请自行修改。
+nagios_web.sh：nagios站点配置脚本。
+configure.sh：监控项配置脚本，内置监控项如不能满足需求，请自行添加，同时nrpe_install.sh中也要添加对应的监控命令。
+check_client.sh：检查客户端是否全部安装完成，检查结果保存在check_nrpe.log中，虽然在nagios_install.sh执行完毕后会提示直接运行check_client.sh，但实际上这还要取决于客户端的安装速度，建议等至少30分钟后再手动执行此脚本。
+
+客户端脚本：
+client_install.sh:将nrpe客户端安装脚本分发到每台客户端服务器，调用nrpe_install.sh安装客户端。如脚本中的下载地址失效，请自行定义。
+nrpe_install.sh：nrpe客户端安装脚本，内含插件包地址，如失效请重新定义；监控端ip请自行修改；监控命令不能满足需求的请自行添加。
 
 
-#configure.sh脚本中可以自定义服务，如有超出预设值的监控命令请到nrpe_install.sh添加
